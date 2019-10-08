@@ -1,0 +1,19 @@
+{
+  "name": "rpg_bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "fuzzy-search": "^3.0.1",
+    "inkjs": "^1.10.2",
+    "knex": "^0.19.5",
+    "mysql": "^2.17.1",
+    "number-to-words": "^1.2.4"
+  }
+}
