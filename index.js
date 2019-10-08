@@ -2,59 +2,59 @@ const Discord = require('discord.js');
 const { prefix, token } = require('./config.json');
 const FuzzySearch = require('fuzzy-search');
 const db = require('./db/db.js');
-const storyData = require('./stories/intercept.json');
-const MessageFormatter = require('./MessageFormatter.js');
-const inkjs = require('inkjs');
 
-const story = new inkjs.Story(storyData);
+const storyData = require('./stories/intercept.json');
+const MessageFormatter = require('./services/MessageFormatter.js');
+const formatter = new MessageFormatter();
+
+const GameService = require('./services/GameService.js');
+const gameService = new GameService();
+
 const client = new Discord.Client();
-const formatter = new MessageFormatter(story);
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-async function continueStory(message) {
-  if (!story.canContinue) return;
-  while (story.canContinue) {
-    let payload = await formatter.message(story.Continue());
-    if (payload.length > 2) message.channel.send(payload);
-  }
-  
-  for (let i = 0; i < story.currentChoices.length; i++) {
-    let payload = await formatter.choice(story.currentChoices, i);
-    if (payload.length > 0) message.channel.send(payload);
-  }
-}
-
-async function parseResponse(message) {
-    let searcher = new FuzzySearch(story.currentChoices, ['text'], {
-      caseSensitive: false,
-    });
-    let result = await searcher.search(message.content);
-    if (result.length > 0 && result[0].text.length > 0) {
-      story.ChooseChoiceIndex(result[0].index);
-      continueStory(message); 
-    } else {
-      message.channel.send('Pardon?')
-    }
-}
-
-client.on('message', message => {
+client.on('message', async function(message) {
   if (message.author.bot) return;
   
-  if (message.content.startsWith(prefix)) {
+  let game = await gameService.loadOrCreate(message.author.id);
+  
+  if (message.content == '!sitrep') {
+    game.ContinueMaximally();
+    let currentText = `> ${game.currentText.trim()}`;
+    if (currentText.length > 2) {
+      message.channel.send(currentText);
+    }
     
-    continueStory(message);
-    
+    gameService.sendChoices(message, game);
   } else {
-    //no prefix
-    //find the closest response to a choice
-    if (story.currentChoices.length > 0) {
-      parseResponse(message);
+    game.ContinueMaximally();
+    // RESPONSE COMMAND
+    if (game.currentChoices.length > 0) {
+      //CHOICES TO BE MADE
+      let searcher = new FuzzySearch(game.currentChoices, ['text'], {
+        caseSensitive: false,
+      });
+      let result = await searcher.search(message.content);  
+      
+      if (result.length > 0 && result[0].text.length > 0) {
+        game.ChooseChoiceIndex(result[0].index);
+        
+        while (game.canContinue) {
+          let payload = await formatter.message(game.Continue().trim());
+          if (payload.length > 2) message.channel.send(payload);
+        }
+    
+        gameService.sendChoices(message, game);
+      }
+      
     }
     
   }
+  
+  gameService.saveGame(message.author.id, game);
   
 });
 

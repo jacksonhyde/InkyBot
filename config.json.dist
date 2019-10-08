@@ -1,3 +1,4 @@
 {
-  token: 'xxxx'
+  "prefix": "!",
+  "token": "xxxx"
 }

@@ -1,7 +1,17 @@
 module.exports = {
-  client: 'mysql',
-  connection: process.env.DATABASE_URL || { host: 'localhost', user: 'root', pass: 'root', database: 'rpg' },
-  migrations: {
-    directory: './db/migrations/'
+  development: {
+    client: 'mysql',
+    connection: {
+      host : 'localhost',
+      user : 'root',
+      password : 'root',
+      database : 'game_states'
+    },
+    migrations: {
+      directory: __dirname + '/db/migrations',
+    },
+    seeds: {
+      directory: __dirname + '/db/seeds'
+    }
   }
 };
