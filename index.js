@@ -9,7 +9,6 @@ const formatter = new MessageFormatter();
 
 const GameService = require('./services/GameService.js');
 const gameService = new GameService();
-
 const client = new Discord.Client();
 
 client.on('ready', () => {
@@ -19,42 +18,79 @@ client.on('ready', () => {
 client.on('message', async function(message) {
   if (message.author.bot || message.channel.type != 'dm') return;
   
-  let game = await gameService.loadOrCreate(message.author.id);
-  let text = [];
+  if (message.content == '!help') {
+    let payload = `> **Commands**
+                  > \`!start\` - begin a playthrough of *The Intercept*.
+                  > \`!restart\` - restart your playthrough of *The Intercept*.
+                  > \`!forget\` - delete your current playthough.
+                  > \`!sitrep\` - To see the last message and your current options. 
+                  > **Choices**
+                  > Choices can be selected by replying with a number or text.
+                  > Progress is saved automatically when each choice is made.`
+    message.channel.send(payload);
+    return;
+  }
   
-  if (message.content == '!sitrep') {
-    game.ContinueMaximally();
-    let currentText = `> ${game.currentText.trim()}`;
-    if (currentText.length > 2) {
-      text.push(currentText);
+  let game = await gameService.checkSave(message.author.id);
+  if (!game) {
+    if (message.content != '!start') {
+      let payload = `> Hello, ${message.author.username}.
+                    > To start a game of **The Intercept** reply \`!start\`.
+                    > To see all commands reply \`!help\``
+      message.channel.send(payload);
+      return;
+    } else {
+      game = await gameService.createGame(message.author.id);
+      game.ContinueMaximally();
     }
+  } else {
+    game = await gameService.loadGame(message.author.id);
+    game.ContinueMaximally();
+  }
+        
+  let text = []
+  
+  if (message.content == '!forget') {
+    gameService.destroyGame(message.author.id);
+    message.channel.send('> Game progress forgotten. Reply `!start` to begin a new game.');
+    return;
+  }  else if (message.content == '!sitrep' || message.content == '!start') {
+    game.ContinueMaximally();
+    text = text.concat(gameService.getCurrentText(game));
     text = text.concat(gameService.sendChoices(message, game));
     message.channel.send(text.join('\n'));
-    
-  } else {
+    return
+  } else if (message.content == '!restart') {
+    gameService.destroyGame(message.author.id);
+    message.channel.send('> Game progress forgotten. Restarting game.');
+    game = await gameService.createGame(message.author.id);
     game.ContinueMaximally();
-    // RESPONSE COMMAND
-    if (game.currentChoices.length > 0) {
-      //CHOICES TO BE MADE
-      let searcher = new FuzzySearch(game.currentChoices, ['text'], {
-        caseSensitive: false,
-      });
-      let result = await searcher.search(message.content);  
-      
-      if (result.length > 0 && result[0].text.length > 0) {
-        game.ChooseChoiceIndex(result[0].index);
-        
-        let text = []
-        while (game.canContinue) {
-          let payload = await formatter.message(game.Continue().trim());
-          if (payload.length > 2) text.push(payload);
-        }
-        
-        text = text.concat(gameService.sendChoices(message, game));
-        message.channel.send(text.join('\n'));
-      }
-    }  
+    text = text.concat(gameService.getCurrentText(game));
+    text = text.concat(gameService.sendChoices(message, game));
+    message.channel.send(text.join('\n'));
+    return
   }
+  
+  while (game.canContinue) {
+    let payload = await formatter.message(game.Continue().trim());
+    if (payload.length > 2) text.push(payload);
+  }
+  if (game.currentChoices.length > 0) {
+    let searcher = new FuzzySearch(game.currentChoices, ['text'], {
+      caseSensitive: false,
+    });
+    let result = await searcher.search(message.content);  
+
+    if (result.length > 0 && result[0].text.length > 0) {
+      game.ChooseChoiceIndex(result[0].index);
+      while (game.canContinue) {
+        let payload = await formatter.message(game.Continue().trim());
+        if (payload.length > 2) text.push(payload);
+      }
+    }
+  }  
+  text = text.concat(gameService.sendChoices(message, game));
+  message.channel.send(text.join('\n'));
   
   gameService.saveGame(message.author.id, game);
   

@@ -1,44 +1,51 @@
 const db = require('../db/db.js');
 const storyData = require('../stories/intercept.json');
 const inkjs = require('inkjs');
-
 const MessageFormatter = require('./MessageFormatter.js');
 const formatter = new MessageFormatter();
-
-const { Game } = require('../models/Game');
 
 module.exports = class GameService {
   constructor() {
   }
   
-  async loadOrCreate(user_id) {
-    let game_data = await Game
-      .query()
-      .where('uuid', user_id);
-    
-    if (game_data[0]) {
-      let stateData = game_data[0].state;
-      let game = new inkjs.Story(storyData);
-      game.state.LoadJson(stateData);
-      return game;
-      
-    } else {
-      let game = new inkjs.Story(storyData);
-      await db('states').insert({
-        uuid: user_id,
-        state: game.state.ToJson()
-      });
-      return game;
-      
-    }
+  async checkSave(userId) {
+    return await db('states').where({
+      uuid: userId
+    }).first();
   }
   
-  async saveGame(user_id, game) {
-    await Game.query()
-      .patch({
-        state: game.state.ToJson()
-      })
-      .where('uuid', user_id);
+  async loadGame(userId) {
+    let game = new inkjs.Story(storyData);
+    let gameData = await db('states').where({uuid: userId}).first();
+    let stateData = gameData.state;
+    game.state.LoadJson(stateData);
+    return game;
+  }
+  
+  async createGame(userId) {
+    let game = new inkjs.Story(storyData);
+    await db('states').insert({
+      uuid: userId,
+      state: game.state.ToJson()
+    });
+    console.log(`Created ${userId}`);
+    return game;
+  }
+  
+  async saveGame(userId, game) {
+    return await db('states')
+      .where({
+        uuid: userId
+      }).update({ 
+        state: game.state.ToJson() 
+      });
+  }
+  
+  async destroyGame(userId, game) {
+    return await db('states')
+      .where({
+        uuid: userId
+      }).del();
   }
   
   sendChoices(message, game) {
@@ -49,7 +56,15 @@ module.exports = class GameService {
         if (payload.length > 0) choices.push(payload);
       }
       return choices;
-//       message.channel.send(choices.join('\n'));
     }
+  }
+  
+  getCurrentText(game) {
+    let text = [];
+    let currentText = `> ${game.currentText.trim()}`;
+      if (currentText.length > 2) {
+        text.push(currentText);
+      }
+    return text;
   }
 };

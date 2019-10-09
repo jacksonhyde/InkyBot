@@ -14,8 +14,6 @@
     "inkjs": "^1.10.2",
     "knex": "^0.19.5",
     "mysql": "^2.17.1",
-    "number-to-words": "^1.2.4",
-    "objection": "^1.6.11",
-    "redis": "^2.8.0"
+    "number-to-words": "^1.2.4"
   }
 }
