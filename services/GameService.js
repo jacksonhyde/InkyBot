@@ -43,11 +43,13 @@ module.exports = class GameService {
   
   sendChoices(message, game) {
     if (game.currentChoices.length > 0) {
-      message.channel.send(`__${game.currentChoices.length} choices__:`)
+      let choices = [];
       for (let i = 0; i < game.currentChoices.length; i++) {
         let payload = formatter.choice(game.currentChoices, i);
-        if (payload.length > 0) message.channel.send(payload);
+        if (payload.length > 0) choices.push(payload);
       }
+      return choices;
+//       message.channel.send(choices.join('\n'));
     }
   }
 };
