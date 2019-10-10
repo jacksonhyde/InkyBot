@@ -1,12 +1,15 @@
+const TurndownService = require('turndown');
+var turndownService = new TurndownService()
+
 module.exports = class MessageFormatter {
   constructor() {
   }
  
   message(_message) {
-    return `> ${_message}`;
+    return `> ${turndownService.turndown(_message)}`;
   }
  
   choice(choices, index) {
-    return `:small_blue_diamond: *${choices[index].text}*`;
+    return `▸ *${turndownService.turndown(choices[index].text)}*`;
   }
 };

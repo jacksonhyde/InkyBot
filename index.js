@@ -76,10 +76,16 @@ client.on('message', async function(message) {
     if (payload.length > 2) text.push(payload);
   }
   if (game.currentChoices.length > 0) {
-    let searcher = new FuzzySearch(game.currentChoices, ['text'], {
-      caseSensitive: false,
-    });
-    let result = await searcher.search(message.content);  
+    let result = [];
+    let messageInt = Math.floor(parseInt(message.content));
+    if (messageInt != 'NaN' && game.currentChoices[messageInt - 1]) {
+      result.push(game.currentChoices[messageInt - 1]);
+    } else {
+      let searcher = new FuzzySearch(game.currentChoices, ['text'], {
+        caseSensitive: false,
+      });
+      result = await searcher.search(message.content);  
+    }
 
     if (result.length > 0 && result[0].text.length > 0) {
       game.ChooseChoiceIndex(result[0].index);
@@ -87,6 +93,9 @@ client.on('message', async function(message) {
         let payload = await formatter.message(game.Continue().trim());
         if (payload.length > 2) text.push(payload);
       }
+    } else {
+      text.push(formatter.message('**Pardon?**'));
+      text = text.concat(gameService.getCurrentText(game));
     }
   }  
   text = text.concat(gameService.sendChoices(message, game));

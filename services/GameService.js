@@ -28,7 +28,6 @@ module.exports = class GameService {
       uuid: userId,
       state: game.state.ToJson()
     });
-    console.log(`Created ${userId}`);
     return game;
   }
   
@@ -41,7 +40,7 @@ module.exports = class GameService {
       });
   }
   
-  async destroyGame(userId, game) {
+  async destroyGame(userId) {
     return await db('states')
       .where({
         uuid: userId
@@ -61,10 +60,10 @@ module.exports = class GameService {
   
   getCurrentText(game) {
     let text = [];
-    let currentText = `> ${game.currentText.trim()}`;
-      if (currentText.length > 2) {
-        text.push(currentText);
-      }
+    let currentText = formatter.message(game.currentText.trim());
+    if (currentText.length > 2) {
+      text.push(currentText);
+    }
     return text;
   }
 };
