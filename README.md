@@ -21,3 +21,9 @@ Play Ink games in Discord!
 * `!forget` deletes the game save keyed to the command user
 * `!sitrep` repeats the output of the game state
 * `!help` prints the available commands
+
+## Troubleshooting
+
+### The application cannot authenticate with the server even though I'm sure the authentication details are correct
+
+See the following fix for Ubuntu 16.04 and later: <https://stackoverflow.com/questions/7864276/cannot-connect-to-database-server-mysql-workbench>
