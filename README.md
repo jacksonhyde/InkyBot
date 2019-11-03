@@ -16,8 +16,8 @@ Play Ink games in Discord!
 
 ## Commands
 
-`!start` creates a new game save of the story keyed to the command user
-`!restart` deletes the current game save and creates a new one keyed to the command user
-`!forget` deletes the game save keyed to the command user
-`!sitrep` repeats the output of the game state
-`!help` prints the available commands
+* `!start` creates a new game save of the story keyed to the command user
+* `!restart` deletes the current game save and creates a new one keyed to the command user
+* `!forget` deletes the game save keyed to the command user
+* `!sitrep` repeats the output of the game state
+* `!help` prints the available commands
