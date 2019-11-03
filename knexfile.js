@@ -4,9 +4,8 @@ module.exports = {
     connection: {
       host : 'localhost',
       user : 'root',
-      password : 'password',
-      database : 'game_states',
-      port : '3306'
+      password : 'root',
+      database : 'game_states'
     },
     migrations: {
       directory: __dirname + '/db/migrations',
