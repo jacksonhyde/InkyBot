@@ -1,5 +1,7 @@
+require('dotenv').config();
+
 const Discord = require('discord.js');
-const { prefix, token } = require('./config.json');
+const { prefix } = require('./config.json');
 const FuzzySearch = require('fuzzy-search');
 const db = require('./db/db.js');
 
@@ -105,4 +107,4 @@ client.on('message', async function(message) {
   
 });
 
-client.login(token);
+client.login(process.env.BOT_TOKEN);

@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^11.5.1",
+    "dotenv": "^8.2.0",
     "fuzzy-search": "^3.0.1",
     "inkjs": "^1.10.2",
     "knex": "^0.19.5",
