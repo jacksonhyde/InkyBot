@@ -1,7 +1,7 @@
 # InkyBot
 
 This is a prototype Discord bot that allows users to play through [Ink](https://www.inklestudios.com/ink/) stories. It was hacked together over a weekend so it's very rough around the edges but it just about works as an MVP. I can't commit enough of my time to develop this on my own, so I'm opening it up to the community - if you'd like to contribute just open a pull request. 
-There's a fairly quiet discord channel [here](discord.gg/an4dU3r).
+There's a fairly quiet discord channel [here](http://discord.gg/an4dU3r).
 
 ### Getting it running
 
