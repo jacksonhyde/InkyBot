@@ -17,7 +17,7 @@ client.on('ready', () => {
 
 client.on('message', async function(message) {
   if (message.author.bot || message.channel.type !== 'dm') return;
-  
+
   if (message.content == '!help') {
     let payload = `> **Commands**
                   > \`!start\` - begin a playthrough of *The Intercept*.
@@ -30,7 +30,7 @@ client.on('message', async function(message) {
     message.channel.send(payload);
     return;
   }
-  
+
   let game = await gameService.checkSave(message.author.id);
   if (!game) {
     if (message.content !== '!start') {
@@ -49,7 +49,7 @@ client.on('message', async function(message) {
   }
 
   let text = []
-  
+
   if (message.content === '!forget') {
     gameService.destroyGame(message.author.id);
     message.channel.send('> Game progress forgotten. Reply `!start` to begin a new game.');

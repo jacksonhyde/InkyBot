@@ -9,7 +9,7 @@ module.exports = class MessageFormatter {
     return `> ${turndownService.turndown(_message)}`;
   }
  
-  choice(choices, index) {
-    return `▸ *${turndownService.turndown(choices[index].text)}*`;
+  choice(choice) {
+    return `▸ *${turndownService.turndown(choice.text)}*`;
   }
 };
