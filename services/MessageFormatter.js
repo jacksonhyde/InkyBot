@@ -1,5 +1,5 @@
 const TurndownService = require('turndown');
-var turndownService = new TurndownService()
+const turndownService = new TurndownService()
 
 module.exports = class MessageFormatter {
   constructor() {
