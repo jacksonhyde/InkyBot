@@ -36,5 +36,10 @@ There are two main services:
 
 The main loop is in index.js, this really needs to be tidied up and refactored. It uses [inkjs](https://github.com/y-lohse/inkjs) to parse the story file so you'll want to familiarize yourself with that.
 
+### Roadmap Ideas
 
-
+ - Loop Refactor
+ - Tag parsing
+ - Dockerisation
+ - Unit Test
+ - Sending images/audio
