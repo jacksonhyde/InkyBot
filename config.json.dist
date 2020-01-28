@@ -1,4 +1,5 @@
 {
   "prefix": "!",
-  "token": "xxxx"
+  "token": "xxxx",
+  "story": "../stories/intercept.json"
 }

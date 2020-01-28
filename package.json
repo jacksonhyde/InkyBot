@@ -7,7 +7,7 @@
     "start": "node ."
   },
   "author": "",
-  "license": "ISC",
+  "license": "GNU GPLv3",
   "dependencies": {
     "discord.js": "^11.5.1",
     "fuzzy-search": "^3.0.1",
