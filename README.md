@@ -27,7 +27,7 @@ Choices can be selected by replying with a number or text (text is fuzzy matched
 
 #### Internals
 
-The bot parses a JSON export of an Ink story. It was developed using an export of [The Intercept](https://www.inklestudios.com/ink/theintercept/) so it may fall over if the structure of your story deviates too much from that. Unfortuntaely it doesn't parse tags at the moment.
+The bot parses a JSON export of an Ink story. It was developed using an export of [The Intercept](https://www.inklestudios.com/ink/theintercept/) so it may fall over if the structure of your story deviates too much from that. Unfortunately it doesn't parse tags at the moment.
 
 There are two main services:
 
