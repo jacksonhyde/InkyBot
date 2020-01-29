@@ -1,4 +1,4 @@
-const Discord = require('discord.js');
+const { Client } = require('discord.js');
 const { prefix, token } = require('./config.json');
 const FuzzySearch = require('fuzzy-search');
 const db = require('./db/db.js');
@@ -9,15 +9,15 @@ const formatter = new MessageFormatter();
 
 const GameService = require('./services/GameService.js');
 const gameService = new GameService();
-const client = new Discord.Client();
+const client = new Client();
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
 client.on('message', async function(message) {
-  if (message.author.bot || message.channel.type != 'dm') return;
-  
+  if (message.author.bot || message.channel.type !== 'dm') return;
+
   if (message.content == '!help') {
     let payload = `> **Commands**
                   > \`!start\` - begin a playthrough of *The Intercept*.
@@ -30,10 +30,10 @@ client.on('message', async function(message) {
     message.channel.send(payload);
     return;
   }
-  
+
   let game = await gameService.checkSave(message.author.id);
   if (!game) {
-    if (message.content != '!start') {
+    if (message.content !== '!start') {
       let payload = `> Hello, ${message.author.username}.
                     > To start a game of **The Intercept** reply \`!start\`.
                     > To see all commands reply \`!help\``
@@ -47,30 +47,30 @@ client.on('message', async function(message) {
     game = await gameService.loadGame(message.author.id);
     game.ContinueMaximally();
   }
-        
+
   let text = []
-  
-  if (message.content == '!forget') {
+
+  if (message.content === '!forget') {
     gameService.destroyGame(message.author.id);
     message.channel.send('> Game progress forgotten. Reply `!start` to begin a new game.');
     return;
-  }  else if (message.content == '!sitrep' || message.content == '!start') {
+  } else if (message.content === '!sitrep' || message.content === '!start') {
     game.ContinueMaximally();
-    text = text.concat(gameService.getCurrentText(game));
-    text = text.concat(gameService.sendChoices(message, game));
+    text.push(...gameService.getCurrentText(game));
+    text.push(...gameService.sendChoices(message, game));
     message.channel.send(text.join('\n'));
     return
-  } else if (message.content == '!restart') {
+  } else if (message.content === '!restart') {
     gameService.destroyGame(message.author.id);
     message.channel.send('> Game progress forgotten. Restarting game.');
     game = await gameService.createGame(message.author.id);
     game.ContinueMaximally();
-    text = text.concat(gameService.getCurrentText(game));
-    text = text.concat(gameService.sendChoices(message, game));
+    text.push(...gameService.getCurrentText(game));
+    text.push(...gameService.sendChoices(message, game));
     message.channel.send(text.join('\n'));
     return
   }
-  
+
   while (game.canContinue) {
     let payload = await formatter.message(game.Continue().trim());
     if (payload.length > 2) text.push(payload);
@@ -78,7 +78,7 @@ client.on('message', async function(message) {
   if (game.currentChoices.length > 0) {
     let result = [];
     let messageInt = Math.floor(parseInt(message.content));
-    if (messageInt != 'NaN' && game.currentChoices[messageInt - 1]) {
+    if (messageInt !== 'NaN' && game.currentChoices[messageInt - 1]) {
       result.push(game.currentChoices[messageInt - 1]);
     } else {
       let searcher = new FuzzySearch(game.currentChoices, ['text'], {
@@ -95,14 +95,14 @@ client.on('message', async function(message) {
       }
     } else {
       text.push(formatter.message('**Pardon?**'));
-      text = text.concat(gameService.getCurrentText(game));
+      text.push(...gameService.getCurrentText(game));
     }
-  }  
-  text = text.concat(gameService.sendChoices(message, game));
+  }
+  text.push(...gameService.sendChoices(message, game));
   message.channel.send(text.join('\n'));
-  
+
   gameService.saveGame(message.author.id, game);
-  
+
 });
 
 client.login(token);

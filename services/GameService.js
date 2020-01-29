@@ -7,21 +7,23 @@ const formatter = new MessageFormatter();
 module.exports = class GameService {
   constructor() {
   }
-  
+
   async checkSave(userId) {
     return await db('states').where({
       uuid: userId
     }).first();
   }
-  
+
   async loadGame(userId) {
     let game = new inkjs.Story(storyData);
-    let gameData = await db('states').where({uuid: userId}).first();
+    let gameData = await db('states').where({
+      uuid: userId
+    }).first();
     let stateData = gameData.state;
     game.state.LoadJson(stateData);
     return game;
   }
-  
+
   async createGame(userId) {
     let game = new inkjs.Story(storyData);
     await db('states').insert({
@@ -49,11 +51,9 @@ module.exports = class GameService {
   
   sendChoices(message, game) {
     if (game.currentChoices.length > 0) {
-      let choices = [];
-      for (let i = 0; i < game.currentChoices.length; i++) {
-        let payload = formatter.choice(game.currentChoices, i);
-        if (payload.length > 0) choices.push(payload);
-      }
+      let choices = game.currentChoices.map(choice => 
+        formatter.choice(choice)
+      ).filter(payload => (payload.length > 0));
       return choices;
     }
   }
