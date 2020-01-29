@@ -18,7 +18,7 @@ client.on('ready', () => {
 client.on('message', async function(message) {
   if (message.author.bot || message.channel.type !== 'dm') return;
 
-  if (message.content == '!help') {
+  if (message.content === '!help') {
     let payload = `> **Commands**
                   > \`!start\` - begin a playthrough of *The Intercept*.
                   > \`!restart\` - restart your playthrough of *The Intercept*.
@@ -59,7 +59,7 @@ client.on('message', async function(message) {
     text.push(...gameService.getCurrentText(game));
     text.push(...gameService.sendChoices(message, game));
     message.channel.send(text.join('\n'));
-    return
+    return;
   } else if (message.content === '!restart') {
     gameService.destroyGame(message.author.id);
     message.channel.send('> Game progress forgotten. Restarting game.');
@@ -68,7 +68,7 @@ client.on('message', async function(message) {
     text.push(...gameService.getCurrentText(game));
     text.push(...gameService.sendChoices(message, game));
     message.channel.send(text.join('\n'));
-    return
+    return;
   }
 
   while (game.canContinue) {
@@ -78,7 +78,7 @@ client.on('message', async function(message) {
   if (game.currentChoices.length > 0) {
     let result = [];
     let messageInt = Math.floor(parseInt(message.content));
-    if (messageInt !== 'NaN' && game.currentChoices[messageInt - 1]) {
+    if (!isNaN(messageInt) && game.currentChoices[messageInt - 1]) {
       result.push(game.currentChoices[messageInt - 1]);
     } else {
       let searcher = new FuzzySearch(game.currentChoices, ['text'], {
