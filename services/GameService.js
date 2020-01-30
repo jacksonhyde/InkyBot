@@ -59,11 +59,7 @@ module.exports = class GameService {
   }
   
   getCurrentText(game) {
-    let text = [];
     let currentText = formatter.message(game.currentText.trim());
-    if (currentText.length > 2) {
-      text.push(currentText);
-    }
-    return text;
+    return (currentText.length > 2) ? [currentText] : [];
   }
 };
