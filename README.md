@@ -7,7 +7,7 @@ There's a fairly quiet discord channel [here](http://discord.gg/an4dU3r).
 
 - Clone the repo, `npm install` and rename `config.json.dist` to `config.json`
 - You'll need create a Discord bot, add it to a Discord channel and then update `config.json` with the login token.
-- [knex](http://knexjs.org/) is used as a DB interface, get your db up and running and update the login details in `knexfile.js`
+- [knex](http://knexjs.org/) is used as a DB interface, get your db up and running and update the login details in `knexfile.js`. Create a seperate test database too.
 - Run the db migrations using `knex:migrate latest`. This [cheatsheet](https://devhints.io/knex) was very handy when I first starting using knex. 
 - `npm start`, if everything's working you bot should appear online in the discord channel!
 

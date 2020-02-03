@@ -6,10 +6,14 @@ module.exports = class MessageFormatter {
   }
  
   message(_message) {
-    return `> ${turndownService.turndown(_message)}`;
+    return `> ${this.turndown(_message)}`;
   }
  
   choice(choice) {
-    return `▸ *${turndownService.turndown(choice.text)}*`;
+    return `▸ *${this.turndown(choice.text)}*`;
+  }
+  
+  turndown(input) {
+    return `${turndownService.turndown(input)}`
   }
 };
