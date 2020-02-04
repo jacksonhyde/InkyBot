@@ -49,7 +49,7 @@ module.exports = class GameService {
       }).del();
   }
   
-  sendChoices(message, game) {
+  getChoices(game) {
     if (game.currentChoices.length > 0) {
       let choices = game.currentChoices.map(choice => 
         formatter.choice(choice)
